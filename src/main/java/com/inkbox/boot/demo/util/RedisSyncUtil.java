@@ -29,10 +29,15 @@ public class RedisSyncUtil implements SyncLock {
 
     @Override
     public String lock(String key) {
+        return lock(key, 200L);
+    }
+
+    @Override
+    public String lock(String key, long time) {
         String value = UUID.randomUUID()
                 .toString();
         while (true) {
-            Boolean res = template.opsForValue().setIfAbsent(key, value, 200L, TimeUnit.MILLISECONDS);
+            Boolean res = template.opsForValue().setIfAbsent(key, value, time, TimeUnit.MILLISECONDS);
             if (Boolean.TRUE == res) {
                 return value;
             }
