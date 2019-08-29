@@ -9,7 +9,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import redis.clients.jedis.JedisPoolConfig;
 
-@Configuration
+//@Configuration
 public class RedisAutoConfig {
     @Bean
     public RedisConnectionFactory redisConnectionFactory(JedisPoolConfig jedisPool,
@@ -19,7 +19,7 @@ public class RedisAutoConfig {
         return connectionFactory;
     }
 
-    @Configuration
+//    @Configuration
     public static class JedisConf {
         @Value("${spring.redis.host:127.0.0.1}")
         private String host;
