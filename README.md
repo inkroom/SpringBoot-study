@@ -9,15 +9,15 @@
 
 #### 待学习项目
 
-[] mysql读写分离 
-[] mysql分库分表 
-[] 缓存双写一致性 
-[] 消息中间件削峰限流 
-[] 消息幂等性 
-[] 布隆过滤器 
-[] 断路器等SpringCloud 
-[] shiro或者Spring Security 
-[] 分布式事务 
-[] zookeeper相关应用
+- [] mysql读写分离 
+- [] mysql分库分表 
+- [] 缓存双写一致性 
+- [] 消息中间件削峰限流 
+- [] 消息幂等性 
+- [] 布隆过滤器 
+- [] 断路器等SpringCloud 
+- [] shiro或者Spring Security 
+- [] 分布式事务 
+- [] zookeeper相关应用
 
-[] mysql索引使用
+- [] mysql索引使用
