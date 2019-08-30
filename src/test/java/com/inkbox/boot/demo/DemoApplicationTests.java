@@ -43,6 +43,8 @@ public class DemoApplicationTests {
 
         Assert.assertNotNull("没有reids操作实例", template);
 
+
+        logger.debug("{}",dao.findAllByName("inkbox"));
     }
 
     @Test

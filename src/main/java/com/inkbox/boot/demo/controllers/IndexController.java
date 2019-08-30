@@ -2,10 +2,13 @@ package com.inkbox.boot.demo.controllers;
 
 import com.inkbox.boot.demo.dao.UserDao;
 import com.inkbox.boot.demo.dos.UserDo;
+import com.inkbox.boot.demo.dto.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +33,7 @@ public class IndexController {
     }
 
     @GetMapping("show")
+    @CrossOrigin
     public String show() {
 
 
@@ -43,5 +47,9 @@ public class IndexController {
 
     }
 
+    @RequestMapping("dto")
+    public Position dto() {
+        return new Position(239, 43);
+    }
 
 }
