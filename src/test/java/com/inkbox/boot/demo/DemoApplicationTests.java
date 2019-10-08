@@ -44,7 +44,7 @@ public class DemoApplicationTests {
         Assert.assertNotNull("没有reids操作实例", template);
 
 
-        logger.debug("{}",dao.findAllByName("inkbox"));
+        logger.debug("{}", dao.findAllByName("inkbox"));
     }
 
     @Test
@@ -165,23 +165,64 @@ public class DemoApplicationTests {
 
 
     @Test
-    public void test() {
+    public void test() throws Exception {
 
         logger.debug("获取expire={}", template.getExpire("3333"));
 
+        CountDownLatch latch = new CountDownLatch(1);
         int count = 10;
         for (int i = 0; i < count; i++) {
-            new Thread(new KillRun(syncUtil, goodsDao)).start();
+            new Thread(new KillRun(latch, syncUtil, goodsDao)).start();
         }
 
-        try {
-            Thread.sleep(6000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        latch.countDown();
+        Thread.sleep(6000L);
     }
 
 
+    class KillRun implements Runnable {
+
+        private CountDownLatch latch;
+        private SyncLock lock;
+
+        private GoodsDao dao;
+
+        public KillRun(CountDownLatch latch, SyncLock lock, GoodsDao goodsDao) {
+            this.lock = lock;
+            this.dao = goodsDao;
+            this.latch = latch;
+        }
+
+        private Logger logger = LoggerFactory.getLogger(getClass());
+
+        @Override
+        public void run() {
+
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            logger.debug("开始获取锁");
+            String value = lock.lock("22233");
+            logger.debug("锁拿到，开始-1");
+            GoodsDo goods = dao.findById(7L).get();
+            if (goods.getCount() != 0) {
+                logger.debug("获取的数据={},{}", goods.getClass(), goods);
+
+                goods.setCount(goods.getCount() - 1);
+
+
+                dao.save(goods);
+            } else {
+                logger.debug("count已为零");
+            }
+            lock.unlock("22233", value);
+
+
+        }
+    }
 //    @Test
 //    public void testRedisson() {
 //        RedissonClient redisson = Redisson.create();
@@ -189,41 +230,4 @@ public class DemoApplicationTests {
 //        redisson.getLock("ddd").lock();
 //
 //    }
-}
-
-class KillRun implements Runnable {
-
-    private SyncLock lock;
-
-    private GoodsDao dao;
-
-    public KillRun(SyncLock lock, GoodsDao goodsDao) {
-        this.lock = lock;
-        this.dao = goodsDao;
-    }
-
-    private Logger logger = LoggerFactory.getLogger(getClass());
-
-    @Override
-    public void run() {
-
-
-        logger.debug("开始获取锁");
-        String value = lock.lock("22233");
-        logger.debug("锁拿到，开始-1");
-        GoodsDo goods = dao.findById(7L).get();
-        if (goods.getCount() != 0) {
-            logger.debug("获取的数据={},{}", goods.getClass(), goods);
-
-            goods.setCount(goods.getCount() - 1);
-
-
-            dao.save(goods);
-        } else {
-            logger.debug("count已为零");
-        }
-        lock.unlock("22233", value);
-
-
-    }
 }
