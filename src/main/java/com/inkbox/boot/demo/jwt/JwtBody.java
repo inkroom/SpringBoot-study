@@ -1,14 +1,24 @@
 package com.inkbox.boot.demo.jwt;
 
 
+import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Jwt有效载荷
  */
 public class JwtBody {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private String iss;//发行人
     private long exp;//到期时间，时间戳
@@ -23,6 +33,32 @@ public class JwtBody {
     public JwtBody() {
         data = new HashMap<>();
     }
+
+
+    public JwtBody(String body) {
+
+        this();
+
+        logger.debug("body={}", body);
+
+
+        JSONObject jsonObject = JSONObject.parseObject(body);
+
+//自定义的key
+        jsonObject.forEach((s, o) -> data.put(s, o));
+
+        setIss(jsonObject.getString("iss"));
+        setExp(jsonObject.getLong("exp"));
+        setSub(jsonObject.getString("sub"));
+        setAud(jsonObject.getString("aud"));
+        setNbf(jsonObject.getLong("nbf"));
+        setIat(jsonObject.getLong("iat"));
+        setJti(jsonObject.getString("jti"));
+
+
+
+    }
+
 
     Map<String, Object> getData() {
         return data;
@@ -97,5 +133,46 @@ public class JwtBody {
     public void setJti(String jti) {
         this.jti = jti;
         data.put("jti", this.jti);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder bodyBuilder = new StringBuilder("{");
+        StringBuilder finalBodyBuilder = bodyBuilder;
+        getData().forEach(new BiConsumer<String, Object>() {
+            @Override
+            public void accept(String s, Object o) {
+                finalBodyBuilder.append("\"").append(s).append("\":\"").append(o.toString()).append("\",");
+            }
+        });
+
+        //移除最后一个，
+        if (bodyBuilder.length() > 1) {
+            bodyBuilder.deleteCharAt(bodyBuilder.length() - 1);
+        }
+        bodyBuilder.append("}");
+
+        return Base64.getUrlEncoder().encodeToString(bodyBuilder.toString().getBytes());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JwtBody body = (JwtBody) o;
+        return exp == body.exp &&
+                nbf == body.nbf &&
+                iat == body.iat &&
+                Objects.equals(logger, body.logger) &&
+                iss.equals(body.iss) &&
+                sub.equals(body.sub) &&
+                aud.equals(body.aud) &&
+                jti.equals(body.jti) &&
+                data.equals(body.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(logger, iss, exp, sub, aud, nbf, iat, jti, data);
     }
 }

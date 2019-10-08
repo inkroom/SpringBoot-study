@@ -22,6 +22,7 @@ public class JwtController {
     @RequestMapping("create")
     public String create() {
 
+        return null;
     }
 
     /**
@@ -30,6 +31,6 @@ public class JwtController {
      * @return
      */
     public String get() {
-
+        return null;
     }
 }
