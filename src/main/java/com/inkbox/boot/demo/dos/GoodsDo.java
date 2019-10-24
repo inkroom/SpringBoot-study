@@ -1,9 +1,12 @@
 package com.inkbox.boot.demo.dos;
 
+import org.hibernate.annotations.Proxy;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "GOODS")
+@Proxy(lazy = false)
 public class GoodsDo {
 
     @Id

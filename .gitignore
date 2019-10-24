@@ -19,6 +19,9 @@
 *.tar.gz
 *.rar
 
+*.mv.db
+*.trace.db
+
 .project
 
 .settings/
