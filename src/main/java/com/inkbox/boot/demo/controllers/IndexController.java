@@ -1,10 +1,12 @@
 package com.inkbox.boot.demo.controllers;
 
+import com.inkbox.boot.demo.config.MQConfig;
 import com.inkbox.boot.demo.dao.UserDao;
 import com.inkbox.boot.demo.dos.UserDo;
 import com.inkbox.boot.demo.dto.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,8 @@ public class IndexController {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @GetMapping("index")
     public String index(UserDo userDo) {
@@ -29,6 +33,16 @@ public class IndexController {
         request.getSession().setAttribute("user", userDo);
 
         return String.valueOf(dao.save(userDo));
+
+    }
+
+    @GetMapping("msg")
+    public String msg(String msg) {
+
+        logger.debug("发送消息:{}", msg);
+        rabbitTemplate.convertAndSend(MQConfig.WORK_EXCHANGE, MQConfig.DELAY_QUEUEA_ROUTING_KEY, msg);
+
+        return msg;
 
     }
 
