@@ -51,7 +51,7 @@ public class IndexController {
 
 
 
-        rabbitTemplate.convertAndSend(MQConfig.CUSTOM_DELAYED_EXCHANGE_NAME, MQConfig.DELAY_QUEUEA_ROUTING_KEY, msg, message -> {
+        rabbitTemplate.convertAndSend(MQConfig.DEAD_LETTER_EXCHANGE, MQConfig.DELAY_QUEUEA_ROUTING_KEY, msg, message -> {
             message.getMessageProperties().setDelay(ttl * 1000);
             return message;
         });
