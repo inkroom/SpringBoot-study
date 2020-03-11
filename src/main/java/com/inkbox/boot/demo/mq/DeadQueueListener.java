@@ -30,15 +30,28 @@ public class DeadQueueListener {
     @RabbitListener(queues = "deadQueue")
     public void receiveA(Message message, Channel channel) throws IOException {
         String msg = new String(message.getBody());
-        logger.info("当前时间：{},死信队列收到消息：{}", new Date().toString(), msg);
+        logger.debug("当前时间：{},死信队列收到消息：{},headers={}", new Date().toString(), msg, message.getMessageProperties().getHeaders());
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
 
 //    @RabbitListener(queues = "WORK_QUEUE")
 //    public void receiveB(Message message, Channel channel) throws IOException {
 //        String msg = new String(message.getBody());
-//        logger.info("当前时间：{},业务队列收到消息：{}", new Date().toString(), msg);
+//        logger.info("当前时间：{},业务队列收到消息：{} headers={}", new Date().toString(), msg, message.getMessageProperties().getHeaders());
 //        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
 //    }
 
+    /**
+     * 真正的延时队列
+     *
+     * @param message
+     * @param channel
+     * @throws IOException
+     */
+    @RabbitListener(queues = "CUSTOM_DELAYED_QUEUE_NAME")
+    public void delay(Message message, Channel channel) throws IOException {
+        String msg = new String(message.getBody());
+        logger.info("当前时间：{},真正的延时队列收到消息：{} headers={}", new Date().toString(), msg, message.getMessageProperties().getHeaders());
+        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+    }
 }

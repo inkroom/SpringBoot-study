@@ -20,6 +20,8 @@ import java.util.Map;
 public class MQConfig {
 
     public static final String DELAY_QUEUEA_ROUTING_KEY = "DELAY_QUEUEA_ROUTING_KEY";
+    public static final String CUSTOM_DELAYED_QUEUE_NAME = "CUSTOM_DELAYED_QUEUE_NAME";
+    public static final String CUSTOM_DELAYED_EXCHANGE_NAME = "CUSTOM_DELAYED_EXCHANGE_NAME";
     public Logger logger = LoggerFactory.getLogger(getClass());
 
     public static final String WORK_EXCHANGE = "WORK_EXCHANGE";
@@ -54,7 +56,7 @@ public class MQConfig {
         return QueueBuilder.durable("WORK_QUEUE")
                 .withArgument("x-dead-letter-exchange", DEAD_LETTER_EXCHANGE)//x-dead-letter-exchange    这里声明当前队列绑定的死信交换机
                 .withArgument("x-dead-letter-routing-key", DEAD_LETTER_QUEUE_ROUTING_KEY)//x-dead-letter-routing-key  这里声明当前队列的死信路由key
-                .withArgument("x-message-ttl", 3000)//声明队列的TTL，单位毫秒
+//                .withArgument("x-message-ttl", 3000)//声明队列的TTL，单位毫秒
                 .build();
     }
 
@@ -66,6 +68,34 @@ public class MQConfig {
     @Bean
     public Queue deadQueue() {
         return QueueBuilder.durable("deadQueue").build();
+    }
+
+    /**
+     * 可以自定义ttl的队列
+     * @return
+     */
+    @Bean
+    public Queue immediateQueue() {
+        return new Queue(CUSTOM_DELAYED_QUEUE_NAME);
+    }
+    /**
+     * 可以自定义ttl的交换机
+     * @return
+     */
+    @Bean
+    public CustomExchange customExchange() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-delayed-type", "direct");
+        return new CustomExchange(CUSTOM_DELAYED_EXCHANGE_NAME, "x-delayed-message", true, false, args);
+    }
+
+    /**
+     * 绑定自定义ttl
+     * @return
+     */
+    @Bean
+    public Binding ttlBinding(@Qualifier("immediateQueue") Queue queue ,@Qualifier("customExchange") Exchange exchange ){
+        return BindingBuilder.bind(queue).to(exchange).with(DELAY_QUEUEA_ROUTING_KEY).noargs();
     }
 
     @Bean

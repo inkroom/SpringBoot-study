@@ -6,6 +6,9 @@ import com.inkbox.boot.demo.dos.UserDo;
 import com.inkbox.boot.demo.dto.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -36,11 +39,22 @@ public class IndexController {
 
     }
 
+    /**
+     * @param msg 消息
+     * @param ttl 时延，单位秒
+     * @return
+     */
     @GetMapping("msg")
-    public String msg(String msg) {
+    public String msg(String msg, int ttl) {
 
         logger.debug("发送消息:{}", msg);
-        rabbitTemplate.convertAndSend(MQConfig.WORK_EXCHANGE, MQConfig.DELAY_QUEUEA_ROUTING_KEY, msg);
+
+
+
+        rabbitTemplate.convertAndSend(MQConfig.CUSTOM_DELAYED_EXCHANGE_NAME, MQConfig.DELAY_QUEUEA_ROUTING_KEY, msg, message -> {
+            message.getMessageProperties().setDelay(ttl * 1000);
+            return message;
+        });
 
         return msg;
 
