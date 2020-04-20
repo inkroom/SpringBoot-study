@@ -31,7 +31,15 @@ public class DeadQueueListener {
     public void receiveA(Message message, Channel channel) throws IOException {
         String msg = new String(message.getBody());
         logger.debug("当前时间：{},死信队列收到消息：{},headers={}", new Date().toString(), msg, message.getMessageProperties().getHeaders());
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+
+//        模拟耗时
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+//        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
 
 //    @RabbitListener(queues = "WORK_QUEUE")

@@ -6,7 +6,7 @@
 
 ### 参考资料
 
-- (参考资料)[https://www.cnblogs.com/mfrank/p/11260355.html#autoid-0-6-0]
+- [参考资料](https://www.cnblogs.com/mfrank/p/11260355.html#autoid-0-6-0)
 
 
 ### 总结
@@ -19,4 +19,10 @@
 
 但是我在测试过程中，对代码进行改造之后，发送消息之后只会一直在队列中停留，不会进入死信；不管是否超过了ttl，也和入队顺序无关。完全无法进入到死信队列
 
-(相关代码)[https://github.com/inkroom/SpringBoot-study/commit/efdddf0c38080ca1f48f7e289ba0b2f0f00665d3]
+[相关代码](https://github.com/inkroom/SpringBoot-study/commit/efdddf0c38080ca1f48f7e289ba0b2f0f00665d3)
+
+
+### 消费耗时
+
+经测试后发现，rabbit消费者应该是单线程，必须处理完上一条消息后才会继续接受消息
+
