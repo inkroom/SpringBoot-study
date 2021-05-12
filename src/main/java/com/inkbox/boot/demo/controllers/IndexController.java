@@ -1,11 +1,16 @@
 package com.inkbox.boot.demo.controllers;
 
+import com.inkbox.boot.demo.config.MQConfig;
 import com.inkbox.boot.demo.dao.UserDao;
 import com.inkbox.boot.demo.dos.UserDo;
 import com.inkbox.boot.demo.dto.Position;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +33,8 @@ public class IndexController {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @RequestMapping("zdb")
     public String data() throws IOException {
@@ -60,6 +67,27 @@ public class IndexController {
         request.getSession().setAttribute("user", userDo);
 
         return String.valueOf(dao.save(userDo));
+
+    }
+
+    /**
+     * @param msg 消息
+     * @param ttl 时延，单位秒
+     * @return
+     */
+    @GetMapping("msg")
+    public String msg(String msg, int ttl) {
+
+        logger.debug("发送消息:{}", msg);
+
+
+
+        rabbitTemplate.convertAndSend(MQConfig.DEAD_LETTER_EXCHANGE, MQConfig.DELAY_QUEUEA_ROUTING_KEY, msg, message -> {
+            message.getMessageProperties().setDelay(ttl * 1000);
+            return message;
+        });
+
+        return msg;
 
     }
 
