@@ -19,7 +19,7 @@ public class RedisAutoConfig {
         return connectionFactory;
     }
 
-//    @Configuration
+    //    @Configuration
     public static class JedisConf {
         @Value("${spring.redis.host:127.0.0.1}")
         private String host;

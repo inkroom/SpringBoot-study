@@ -1,10 +1,8 @@
-
 ## 实现分布式session
 
 > 实现基于redis的分布式session
 
 ---
-
 
 ### 原理
 
@@ -12,8 +10,7 @@
 
 ### 依赖
 
-引入**spring-boot-starter-data-redis**、**spring-session-data-redis**；
-引入`kryo`作为序列化方案
+引入**spring-boot-starter-data-redis**、**spring-session-data-redis**； 引入`kryo`作为序列化方案
 
 ```xml
     <dependency>
@@ -50,7 +47,6 @@ spring.redis.database=2
 ```
 
 ps: 如果有需要还可以修改对应的连接池配置，或者更换默认的`lettuce`框架
-
 
 ### 编写序列化类
 
@@ -194,15 +190,11 @@ public class RedisSessionConfig {
 }
 ```
 
-
 ps： 更多配置信息亦可通过`RedisOperationsSessionRepository`修改，如session有效实现，cookie name值等等
-
-
 
 ### todo
 
 - 寻找更合适的注入`Serializer`方式
-
 
 ### 代码
 

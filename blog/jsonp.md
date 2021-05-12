@@ -1,22 +1,19 @@
-
 ## 实现jsonp跨域通信
 
 > 实现基于jsonp的跨域通信方案
 
-
 ### 原理
 
 > 浏览器对非同源ajax请求有限制，不允许发送跨域请求  
-> 目前跨域解决方案有两种   
+> 目前跨域解决方案有两种
 > - cros配置
 > - jsonp请求
->  
+>
 > cros为新规范，通过一个head请求询问服务器是否允许跨域，若不允许则被拦截   
 > jsonp则为利用浏览器不限制js脚本的同源性，通过动态创建script请求，服务器传递回一个js函数调用语法，浏览器端按照js函数正常调用回调函数
 >
- 
- 
-###  实现思路
+
+### 实现思路
 
 首先确定服务器端应该如何返回数据
 
@@ -40,7 +37,6 @@ jQuery39948237({key:3})
 --- 
 
 最后，为了减少代码的侵入，不应该将上述流程放入一个Controller正常逻辑中，应该考虑使用aop实现
-
 
 ### 实现
 
@@ -169,7 +165,6 @@ public class JsonpAdvice implements ResponseBodyAdvice {
 
 使用`@RestControllerAdvice`指明切点
 
-
 ### bug
 
 经过此步骤，理论上即可实现jsonp调用了。
@@ -181,7 +176,9 @@ public class JsonpAdvice implements ResponseBodyAdvice {
 ```javascript
 Jquery332({"x":239,"y":43})
 ```
+
 实际返回
+
 ```javascript
 "Jquery332({\"x\":239,\"y\":43})"
 

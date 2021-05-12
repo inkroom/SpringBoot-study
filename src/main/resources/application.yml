@@ -1,0 +1,22 @@
+logging:
+    level:
+        com: WARN
+        com.inkbox: debug
+        io: WARN
+        java: WARN
+        org:
+            hibernate: warn
+            springframework: WARN
+spring:
+    datasource:
+        driver-class-name: org.h2.Driver
+        url: jdbc:h2:./test
+    jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        hibernate:
+            ddl-auto: update
+        open-in-view: true
+        show-sql: true
+    redis:
+        database: 2
+        host: 127.0.0.1

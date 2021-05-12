@@ -35,8 +35,8 @@ public class RedisSessionConfig {
         repository.setDefaultSerializer(serializer);
         //由于RedisOperationsSessionRepository 要先构造，且不提供方法修改属性，只能采取这种这种的方法
         RedisOperations<Object, Object> sessionRedisOperations = repository.getSessionRedisOperations();
-        if (sessionRedisOperations instanceof  RedisTemplate){
-            RedisTemplate<Object,Object> redisTemplate = ((RedisTemplate<Object, Object>) sessionRedisOperations);
+        if (sessionRedisOperations instanceof RedisTemplate) {
+            RedisTemplate<Object, Object> redisTemplate = ((RedisTemplate<Object, Object>) sessionRedisOperations);
             redisTemplate.setValueSerializer(serializer);
             redisTemplate.setHashValueSerializer(serializer);
         }

@@ -56,7 +56,6 @@ public class JwtBody {
         setJti(jsonObject.getString("jti"));
 
 
-
     }
 
 
